@@ -72,14 +72,29 @@ public class Main2 {
         JFrame app = new DrawLinesApp2(); // Swing library
     }
 }
-
+class T3_Model
+{
+    public enum PlayerValue {X, O, NONE}
+    /**
+     * @throws RuntimeException if location is not vacant
+     * @param row
+     * @param column
+     */
+//    private PlayerValue board[][] = new PlayerValue[3][3];
+//    public void makeMove(int row, int column){}
+//    public PlayerValue getCurrentPlayer(){}
+//    public PlayerValue getWinner(){}
+//    public boolean isGameOver() {}
+//
+}
 class DrawLinesApp2 extends JFrame
 {
     DrawLinesApp2()
     {
         super("Line Drawer 1.0");
         add(new DrawCanvas(), BorderLayout.CENTER);
-        add(new JLabel(), BorderLayout.SOUTH);
+        add(new JLabel(" "), BorderLayout.SOUTH); // status bar
+        add(new JButton("New Game"), BorderLayout.NORTH);
         this.setSize(600,600);
         this.setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
@@ -89,7 +104,36 @@ class DrawLinesApp2 extends JFrame
     {
         DrawCanvas()
         {
-            setBackground( Color.BLACK);
+            setBackground( Color.WHITE);
+            makeRandomLines();
+//            setLayout(new GridLayout(3,3,5,5));
+//            for (int i=0;i<9;i++)
+//            {
+//                add(new JButton());
+//            }
+        }
+
+        Line lines[] = new Line[10];
+        class Line{ int x1,y1,x2,y2;}
+        int r(){ return (int)(Math.random() * 500);}
+        public void makeRandomLines(){
+
+            for (int i=0;i<10;i++)
+            {
+                lines[i] = new Line();
+                lines[i].x1 = r();
+                lines[i].y1 = r();
+                lines[i].y2 = r();
+                lines[i].x2 = r();
+            }
+        }
+        @Override
+        public void paint(Graphics g)
+        {
+            super.paint(g);
+
+            for (int i=0;i<10;i++)
+                g.drawLine(lines[i].x1,lines[i].y1,lines[i].x2,lines[i].y2);
         }
     }
 }
