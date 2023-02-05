@@ -94,7 +94,9 @@ class DrawLinesApp2 extends JFrame
         super("Line Drawer 1.0");
         add(new DrawCanvas(), BorderLayout.CENTER);
         add(new JLabel(" "), BorderLayout.SOUTH); // status bar
-        add(new JButton("New Game"), BorderLayout.NORTH);
+        JButton newGameButton = new JButton("New Game");
+        newGameButton.setForeground(Color.BLUE);
+        add(newGameButton, BorderLayout.NORTH);
         this.setSize(600,600);
         this.setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
