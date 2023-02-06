@@ -2,6 +2,8 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -70,55 +72,127 @@ public class Main {
     }
 }
  class DrawApp extends JFrame{
+     private ArrayList<Line> lines = new ArrayList<>();
         DrawApp()
         {
-            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            addWindowListener(new WindowListener() {
+                @Override
+                public void windowOpened(WindowEvent e) {
+                    FileInputStream fis = null;
+                    try {
+                        fis = new FileInputStream("lines.bin");
+                        ObjectInputStream ois = new ObjectInputStream(fis);
+                        lines =  (ArrayList<Line>) ois.readObject();
+                        ois.close();
+                    } catch (FileNotFoundException ex) {
+                        ex.printStackTrace();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
+                    System.exit(0);
+                }
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream("lines.bin");
+                        ObjectOutputStream oos = new ObjectOutputStream(fos);
+                        oos.writeObject(lines);
+                        oos.close();
+                    } catch (FileNotFoundException ex) {
+                        ex.printStackTrace();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void windowClosed(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowIconified(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowActivated(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+
+                }
+            });
             setSize(500,500);
-            add(new JTextField(), BorderLayout.NORTH);
+            JButton clearButton = new JButton("Clear Lines");
+            add(clearButton, BorderLayout.NORTH);
+
+
+
+
             add(new JLabel("Content"), BorderLayout.SOUTH);
             JPanel drawPanel = new DrawPanel();
             add( drawPanel, BorderLayout.CENTER);
 
+            clearButton.addActionListener(
+                    e -> { lines.clear();
+                           drawPanel.repaint(); }
+            );
+
             setVisible(true);
         }
-        private class Line
+        private static class Line implements Serializable
         {
+            Line(Point p1, Point p2){x1=p1.x;y1=p1.y;x2=p2.x;y2=p2.y;}
             int x1,x2,y1,y2;
         }
         private class DrawPanel extends JPanel
         {
-            private Line line[] = new Line[10];
+
             DrawPanel()
             {
                 this.setBackground( Color.WHITE);
+               this.addMouseListener( // anonymous inner class
+                 new MouseAdapter(){
+                    private Point p;
 
-                for (int i=0;i<10;i++)
-                {
-                    line[i] = new Line();
-                    line[i].x1 = r();
-                    line[i].x2 = r();
-                    line[i].y1 = r();
-                    line[i].y2 = r();
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        System.out.println( e.getPoint() );
+                        if (p==null)
+                        {   p = e.getPoint();
+                            return;
+                        }
+                        lines.add(new Line(p, e.getPoint()));
+                        p = e.getPoint();
+                        DrawPanel.this.repaint();
+                    }
                 }
-//                this.setLayout(new GridLayout(3,3,5,5));
-//                for (int i=0;i<9;i++)
-//                    add(new JButton());
+               );
             }
 
             @Override
-            public void paint(Graphics g)
-            {
+            public void paint(Graphics g) {
                 super.paint(g);
 
-                for (int i=0;i<10;i++)
-                   g.drawLine(line[i].x1, line[i].y1,
-                           line[i].x2, line[i].y2 );
-            }
-
-            Random rand = new Random();
-            private int r() {
-                return rand.nextInt(500);
+                for (Line l : lines)
+                    g.drawLine(l.x1, l.y1, l.x2, l.y2);
             }
         }
  }
+
+
 
