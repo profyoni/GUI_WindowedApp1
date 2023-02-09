@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
 
 
 class MyApp2 extends JFrame{
@@ -89,16 +91,87 @@ class T3_Model
 }
 class DrawLinesApp2 extends JFrame
 {
+
+    private ArrayList<Line> lines = new ArrayList<>();
+
+
     DrawLinesApp2()
     {
-        super("Line Drawer 1.0");
+        super();
+        setTitle("Line Drawer 1.0");
         add(new DrawCanvas(), BorderLayout.CENTER);
         add(new JLabel(" "), BorderLayout.SOUTH); // status bar
         JButton newGameButton = new JButton("New Game");
+        newGameButton.addActionListener(
+                e -> {  lines.clear();
+                        repaint();    }
+                );
         newGameButton.setForeground(Color.BLUE);
         add(newGameButton, BorderLayout.NORTH);
         this.setSize(600,600);
-        this.setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE);
+
+        addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                // try with resources = gurantees close resources
+                try (ObjectInputStream ois = new ObjectInputStream(  new FileInputStream("lines2.bin") )) {
+                    lines = (ArrayList<Line>) ois.readObject( );
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+                finally {
+
+                }
+                repaint();
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream("lines2.bin");
+                    ObjectOutputStream oos = new ObjectOutputStream( fos );
+                    oos.writeObject( lines );
+                    oos.close();
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                System.exit(0);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
+
+
         this.setVisible(true);
     }
 
@@ -107,7 +180,9 @@ class DrawLinesApp2 extends JFrame
         DrawCanvas()
         {
             setBackground( Color.WHITE);
-            makeRandomLines();
+
+            addMouseListener( new LineDrawerListener());
+            //makeRandomLines();
 //            setLayout(new GridLayout(3,3,5,5));
 //            for (int i=0;i<9;i++)
 //            {
@@ -115,27 +190,51 @@ class DrawLinesApp2 extends JFrame
 //            }
         }
 
-        Line lines[] = new Line[10];
-        class Line{ int x1,y1,x2,y2;}
-        int r(){ return (int)(Math.random() * 500);}
-        public void makeRandomLines(){
-
-            for (int i=0;i<10;i++)
-            {
-                lines[i] = new Line();
-                lines[i].x1 = r();
-                lines[i].y1 = r();
-                lines[i].y2 = r();
-                lines[i].x2 = r();
+        class LineDrawerListener extends MouseAdapter{
+            Point p;
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (p == null)
+                {
+                    p = e.getPoint();
+                    return;
+                }
+                lines.add( new Line(p, e.getPoint()));
+                p = e.getPoint();
+                repaint();
             }
+
+
         }
+
+//        int r(){ return (int)(Math.random() * 500);}
+//        public void makeRandomLines(){
+//
+//            for (int i=0;i<10;i++)
+//            {
+//                lines[i] = new Line();
+//                lines[i].x1 = r();
+//                lines[i].y1 = r();
+//                lines[i].y2 = r();
+//                lines[i].x2 = r();
+//            }
+//        }
         @Override
         public void paint(Graphics g)
         {
             super.paint(g);
 
-            for (int i=0;i<10;i++)
-                g.drawLine(lines[i].x1,lines[i].y1,lines[i].x2,lines[i].y2);
+            for (Line l :lines)
+                g.drawLine(l.x1,l.y1,l.x2,l.y2);
         }
+    }
+}
+// supports Object Serizliation = convert to a sequence of bytes
+class Line implements Serializable { // tagging
+    int x1,y1,x2,y2;
+    Line(Point p1, Point p2)
+    {
+        x1 = p1.x; y1 = p1.y;
+        x2 = p2.x; y2 = p2.y;
     }
 }

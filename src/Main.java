@@ -6,7 +6,21 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 
+
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+
+//// enhanced enum
+//enum Weekday // final static instances of type Weekday for each enum value
+//{
+//    Sunday("Rishon"), Monday("Sheni");
+//
+//    private String hebrewName;
+//
+//    Weekday(String hebrew) {
+//        hebrewName = hebrew;
+//    }
+//}
+
 class MyApp extends JFrame {
     class MyEventHandler implements ActionListener {
         @Override
@@ -65,18 +79,24 @@ class MyApp extends JFrame {
         this.setVisible(true);
     }
 }
+
+/**
+ * This code is cool
+ */
 public class Main {
     // swing lib 1.2
     public static void main(String[] args) {
         JFrame app = new DrawApp();
     }
 }
+
+
  class DrawApp extends JFrame{
      private ArrayList<Line> lines = new ArrayList<>();
         DrawApp()
         {
             //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            addWindowListener(new WindowListener() {
+            addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowOpened(WindowEvent e) {
                     FileInputStream fis = null;
@@ -92,48 +112,21 @@ public class Main {
                     } catch (ClassNotFoundException ex) {
                         ex.printStackTrace();
                     }
-                    System.exit(0);
+                    repaint();
+
                 }
 
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    FileOutputStream fos = null;
-                    try {
-                        fos = new FileOutputStream("lines.bin");
-                        ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("lines.bin"))){
                         oos.writeObject(lines);
-                        oos.close();
                     } catch (FileNotFoundException ex) {
                         ex.printStackTrace();
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
 
-                }
-
-                @Override
-                public void windowClosed(WindowEvent e) {
-
-                }
-
-                @Override
-                public void windowIconified(WindowEvent e) {
-
-                }
-
-                @Override
-                public void windowDeiconified(WindowEvent e) {
-
-                }
-
-                @Override
-                public void windowActivated(WindowEvent e) {
-
-                }
-
-                @Override
-                public void windowDeactivated(WindowEvent e) {
-
+                    System.exit(0);
                 }
             });
             setSize(500,500);
