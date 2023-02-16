@@ -3,11 +3,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Properties;
 
 
 class MyApp2 extends JFrame{
 
-    boolean wasModified = true;
+    private  boolean wasModified = true;
+
     class MyWindowListener extends WindowAdapter
     {
         @Override
@@ -94,13 +97,14 @@ class DrawLinesApp2 extends JFrame
 
     private ArrayList<Line> lines = new ArrayList<>();
 
-
+JCheckBox cb = new JCheckBox("PC");
     DrawLinesApp2()
     {
         super();
         setTitle("Line Drawer 1.0");
         add(new DrawCanvas(), BorderLayout.CENTER);
         add(new JLabel(" "), BorderLayout.SOUTH); // status bar
+        add( cb , BorderLayout.EAST);
         JButton newGameButton = new JButton("New Game");
         newGameButton.addActionListener(
                 e -> {  lines.clear();
@@ -127,6 +131,24 @@ class DrawLinesApp2 extends JFrame
 
                 }
                 repaint();
+
+                Properties props = new Properties();
+                try {
+                    props.load( new FileInputStream("lines.ini"));
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                String x_s = props.getProperty("location_x");
+                String y_s = props.getProperty("location_y");
+
+                int x = Integer.parseInt(x_s);
+                int y = Integer.parseInt(y_s);
+
+                Point p = new Point(x,y);
+                DrawLinesApp2.this.setLocation(p);
             }
 
             @Override
@@ -142,6 +164,21 @@ class DrawLinesApp2 extends JFrame
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+
+                Point p = DrawLinesApp2.this.getLocation();
+
+                Properties props = new Properties();
+                props.put("location_x", p.x+"");
+                props.put("location_y", p.y+"");
+                try {
+                    props.store( new FileOutputStream("lines.ini"), "");
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+
                 System.exit(0);
             }
 
@@ -202,6 +239,8 @@ class DrawLinesApp2 extends JFrame
                 lines.add( new Line(p, e.getPoint()));
                 p = e.getPoint();
                 repaint();
+
+                System.out.println(cb.isSelected());
             }
 
 
