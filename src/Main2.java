@@ -2,9 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Properties;
+import java.util.*;
 
 
 class MyApp2 extends JFrame{
@@ -275,5 +273,49 @@ class Line implements Serializable { // tagging
     {
         x1 = p1.x; y1 = p1.y;
         x2 = p2.x; y2 = p2.y;
+    }
+}
+
+class Afsksdkjhf<E> extends AbstractCollection<E> implements java.util.Queue<E>
+{
+
+    @Override
+    public boolean add(E e) {
+        return false;
+    }
+
+    @Override
+    public boolean offer(E e) {
+        return false;
+    }
+
+    @Override
+    public E remove() {
+        return null;
+    }
+
+    @Override
+    public E poll() {
+        return null;
+    }
+
+    @Override
+    public E element() {
+        return null;
+    }
+
+    @Override
+    public E peek() {
+        return null;
+    }
+
+    @Override
+    public Iterator iterator() {
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return 0;
     }
 }
