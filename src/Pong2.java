@@ -31,9 +31,12 @@ public class Pong2 extends JFrame {
             @Override
             public void run() {
                 verySlowMethod();
+                // tell the EDT to setText on button
+                SwingUtilities.invokeLater( () -> button.setText("Done") );
             }
         });
         t.start(); // not t.run
+
     }
 
     private void verySlowMethod() {
