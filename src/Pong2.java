@@ -46,13 +46,20 @@ public class Pong2 extends JFrame {
 
     private static class GamePanel extends JPanel{
         private Point ball = new Point(100,200);
-        private Point delta = new Point(+1,-1);
+        private Point delta = new Point(+2,-2);
         private Point paddle = new Point(20,300);
         GamePanel(){
             this.setBackground( Color.BLACK );
-            Timer ballTimer = new Timer(10,
+            Timer ballTimer = new Timer(20,
                     e -> {
                 // update location
+                        Graphics g = getGraphics();
+                        if (g==null)
+                            return;
+                        // draw in BLACK in old location
+                        g.setColor( getBackground() );
+                        g.fillOval(ball.x, ball.y, 40,40);
+
                         ball.translate(delta.x,  delta.y);
 
                         // bounds checking
@@ -65,13 +72,22 @@ public class Pong2 extends JFrame {
                             delta.x = -delta.x;
                         }
 
-                        repaint();
+                        g.setColor(Color.WHITE);
+                        g.fillOval(ball.x, ball.y, 40,40);
+
+                        //repaint();
                     });
             ballTimer.start();
 
             addMouseWheelListener( e ->{
                 paddle.y += -e.getPreciseWheelRotation() * 5;
-                repaint();
+                //repaint();
+                Graphics g = getGraphics();
+                if (g != null)
+                {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(paddle.x,paddle.y, 10,80);
+                }
             });
         }
 
