@@ -21,6 +21,7 @@ public class Misc {
         d.put("OS", "MAc");
         d.put("ip", "1.2.3.4");
     }
+
     static String get(String key)
     {
         return d.get(key);

@@ -5,12 +5,12 @@ import java.util.regex.Matcher;
 public class Regex {
 
     public static void main(String[] args){
-        String balls = args[0];
-        int ballCount = Integer.parseInt(balls);
+        String regex = args[0];
+        String searchText = args[1];
 
-            Pattern pattern = Pattern.compile("\\d\\d");
+            Pattern pattern = Pattern.compile(regex);
 
-            Matcher matcher = pattern.matcher("Stock price is 37 and 43");
+            Matcher matcher = pattern.matcher(searchText);
 
             boolean found = false;
             while (matcher.find()) {
@@ -21,6 +21,8 @@ public class Regex {
                         matcher.start(),
                         matcher.end()));
                 found = true;
+                for (int i=1;i<=matcher.groupCount();i++)
+                    System.out.println(i + ":" + matcher.group(i));
             }
             if(!found){
                 System.out.println("No match found.%n");
