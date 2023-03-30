@@ -8,5 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="net.sourceforge.htmlunit" level="project" />
+    <orderEntry type="library" name="google.code.gson" level="application" />
+    <orderEntry type="library" name="google.guava" level="project" />
   </component>
 </module>

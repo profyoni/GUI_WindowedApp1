@@ -9,7 +9,7 @@ public class WebScraper {
 
         String url = "https://www.example.com/";
         HtmlPage page = client.getPage(url);
-        String pageContent = page.asNormalizedText();
+        String pageContent = page.asXml();
 
         System.out.println(pageContent);
 
